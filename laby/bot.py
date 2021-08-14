@@ -31,7 +31,11 @@ async def chuck(ctx):
 @bot.command(name='roll', help='Roll the dice.')
 async def roll(ctx):
     response = random.randrange(1, 7)
-    await ctx.send(f"You rolled a {response}! 🎲")
+
+    embed = discord.Embed(description = f"You rolled a {response}! 🎲",
+                          color = discord.Colour.blue())
+
+    await ctx.send(embed=embed)
 
 @bot.command(name='wiki', help='Search for information on Wikipedia.')
 async def roll(ctx, *args):
@@ -69,19 +73,14 @@ async def roll(ctx, *args):
 @bot.command(name='dog', help='Random dog image.')
 async def dog(ctx):
 
-    URL = "https://random.dog/"
+    URL = "https://dog.ceo/api/breeds/image/random"
     page = requests.get(URL)
-    soup = BeautifulSoup(page.content, 'html.parser')
-
-    try:
-        image = soup.find(id="dog-img")['src']
-    except:
-        image = soup.find(id="dog-img").source['src']
+    image = page.json()['message']
 
     embed = discord.Embed(title="Here's your adorable dog",
                           color=discord.Colour.blue())
 
-    embed.set_image(url=f'{URL}{image}')
+    embed.set_image(url=image)
 
     await ctx.send(embed=embed)
 
@@ -101,12 +100,10 @@ async def cat(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command(name='test', help='Testing command.')
-async def test(ctx, *args):
-    arguments = args
-    result = ' '.join(word for word in arguments)
-
-    await ctx.send(f"{result}")
+# @bot.command(name='test', help='Testing command.')
+# async def test(ctx, *args):
+#
+#     await ctx.send(f"{result}")
 
 
 bot.run(TOKEN)
