@@ -10,8 +10,11 @@ import wikipedia
 from bs4 import BeautifulSoup
 
 load_dotenv()
+
+# Tokens/Keys
 TOKEN = os.getenv('DISCORD_TOKEN')
 OPENWEATHER = os.getenv('OPENWEATHER_KEY')
+IMDB_KEY = os.getenv('IMDB_KEY')
 
 bot = commands.Bot(command_prefix='!')
 
@@ -112,25 +115,96 @@ async def weather(ctx, *args):
         color = discord.Colour.blue()
     )
 
-    # embed.set_image(url=challenge["image"])
     embed.set_thumbnail(
         url=f"http://openweathermap.org/img/w/{response['weather'][0]['icon']}.png"
     )
 
-    embed.add_field(name="🌡 Avg. Temperature", value=f'{"{:.2f}".format(float(response["main"]["temp"]) - 273.15)}°C', inline=True)
-    embed.add_field(name="🌡 Min", value=f'{"{:.2f}".format(float(response["main"]["temp_min"]) - 273.15)}°C', inline=True)
-    embed.add_field(name="🌡 Max", value=f'{"{:.2f}".format(float(response["main"]["temp_max"]) - 273.15)}°C', inline=True)
+    # Temperature (min, average, max)
+    embed.add_field(name="🌡 Min.", value=f'{"{:.2f}".format(float(response["main"]["temp_min"]) - 273.15)}°C', inline=True)
+    embed.add_field(name="🌡 Avg.", value=f'{"{:.2f}".format(float(response["main"]["temp"]) - 273.15)}°C', inline=True)
+    embed.add_field(name="🌡 Max.", value=f'{"{:.2f}".format(float(response["main"]["temp_max"]) - 273.15)}°C', inline=True)
 
-
+    # Humidity, cloudiness, wind speed
     embed.add_field(name="💧 Humidity", value=f'{response["main"]["humidity"]}%', inline=True)
     embed.add_field(name="☁ Clouds", value=f'{response["clouds"]["all"]}% cloudiness', inline=True)
-    embed.add_field(name="💨 Wind", value=f'{response["wind"]["speed"]} meters per second', inline=True)
-
-
-
+    embed.add_field(name="💨 Wind", value=f'{response["wind"]["speed"]} m/sec', inline=True)
 
     await ctx.send(embed=embed)
 
+@bot.command(name='imdb', help='IMDb.')
+async def imdb(ctx, *args):
+
+    user_input = ' '.join(word for word in args)
+
+    # Endpoint
+    url = "https://imdb8.p.rapidapi.com/auto-complete"
+    querystring = {"q": user_input}
+
+    # Header parameters
+    headers = {
+        'x-rapidapi-key': IMDB_KEY,
+        'x-rapidapi-host': "imdb8.p.rapidapi.com"
+    }
+
+    # Get show ID
+    try:
+        response = requests.request("GET", url, headers=headers, params=querystring).json()
+        show_id = response['d'][0]
+    except KeyError:
+        embed = discord.Embed(description=f"{user_input} not found! Sorry.", color=discord.Colour.blue())
+        await ctx.send(embed=embed)
+        return
+
+    # Get overview details
+    url2 = "https://imdb8.p.rapidapi.com/title/get-overview-details"
+    querystring2 = {"tconst": f"{show_id['id']}", "currentCountry": "US"}
+
+    response2 = requests.request("GET", url2, headers=headers, params=querystring2).json()
+
+    # Summary
+    try:
+        summary = response2['plotSummary']['text']
+    except KeyError:
+        summary = response2['plotOutline']['text']
+
+    embed = discord.Embed(
+        title=f"{response2['title']['title']} ({show_id['q'] if show_id['q'] == 'TV series' else show_id['y']})",
+        description= summary,
+        color = discord.Colour.blue()
+    )
+
+    # Thumbnail
+    embed.set_thumbnail(url=response2['title']['image']['url'])
+    embed.set_image(url=response2['title']['image']['url'])
+
+    genres = ', '.join(genre for genre in response2['genres'])
+
+    embed.add_field(name="Genres", value=f"{genres}", inline=True)
+    embed.add_field(name="Running time", value=response2['title']['runningTimeInMinutes'], inline=True)
+    embed.add_field(name="Rating", value=response2['ratings']['rating'], inline=True)
+
+
+    if response['d'][0]['q'] == 'TV series':
+
+        # Start year
+        embed.add_field(name="Started", value=response2['title']['seriesStartYear'], inline=True)
+
+        # If series has ended, otherwise in progress
+        try:
+            embed.add_field(name="Finished", value=response2['title']['seriesEndYear'], inline=True)
+        except KeyError:
+            embed.add_field(name="Finished", value="In progress", inline=True)
+
+        # Number of episodes
+        embed.add_field(name="Episodes", value=response2['title']['numberOfEpisodes'], inline=True)
+
+
+
+    # Trailer video
+    embed.add_field(name="Trailer", value=f"https://www.imdb.com/video/{response['d'][0]['v'][0]['id']}", inline=False)
+
+
+    await ctx.send(embed=embed)
 
 # @bot.command(name='test', help='Testing command.')
 # async def test(ctx, *args):
