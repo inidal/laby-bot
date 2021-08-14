@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+OPENWEATHER = os.getenv('OPENWEATHER_KEY')
 
 bot = commands.Bot(command_prefix='!')
 
@@ -96,6 +97,37 @@ async def cat(ctx):
                           color=discord.Colour.blue())
 
     embed.set_image(url=image)
+
+    await ctx.send(embed=embed)
+
+@bot.command(name='weather', help='Weather.')
+async def weather(ctx, *args):
+
+    city = ' '.join(word for word in args)
+    URL = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER}'
+    response = requests.get(URL).json()
+
+    embed = discord.Embed(
+        title=f'{response["weather"][0]["description"].capitalize()} in {response["name"]}, {response["sys"]["country"]}',
+        color = discord.Colour.blue()
+    )
+
+    # embed.set_image(url=challenge["image"])
+    embed.set_thumbnail(
+        url=f"http://openweathermap.org/img/w/{response['weather'][0]['icon']}.png"
+    )
+
+    embed.add_field(name="🌡 Avg. Temperature", value=f'{"{:.2f}".format(float(response["main"]["temp"]) - 273.15)}°C', inline=True)
+    embed.add_field(name="🌡 Min", value=f'{"{:.2f}".format(float(response["main"]["temp_min"]) - 273.15)}°C', inline=True)
+    embed.add_field(name="🌡 Max", value=f'{"{:.2f}".format(float(response["main"]["temp_max"]) - 273.15)}°C', inline=True)
+
+
+    embed.add_field(name="💧 Humidity", value=f'{response["main"]["humidity"]}%', inline=True)
+    embed.add_field(name="☁ Clouds", value=f'{response["clouds"]["all"]}% cloudiness', inline=True)
+    embed.add_field(name="💨 Wind", value=f'{response["wind"]["speed"]} meters per second', inline=True)
+
+
+
 
     await ctx.send(embed=embed)
 
