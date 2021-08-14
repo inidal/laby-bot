@@ -168,7 +168,7 @@ async def imdb(ctx, *args):
         summary = response2['plotOutline']['text']
 
     embed = discord.Embed(
-        title=f"{response2['title']['title']} ({show_id['q'] if show_id['q'] == 'TV series' else show_id['y']})",
+        title=f"{response2['title']['title']} ({show_id['q'] if show_id['q'] == 'TV series' or 'TV mini-series' else show_id['y']})",
         description= summary,
         color = discord.Colour.blue()
     )
@@ -184,7 +184,7 @@ async def imdb(ctx, *args):
     embed.add_field(name="Rating", value=response2['ratings']['rating'], inline=True)
 
 
-    if response['d'][0]['q'] == 'TV series':
+    if response['d'][0]['q'] == 'TV series' or 'TV mini-series':
 
         # Start year
         embed.add_field(name="Started", value=response2['title']['seriesStartYear'], inline=True)
