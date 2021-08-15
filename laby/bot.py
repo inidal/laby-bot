@@ -168,7 +168,7 @@ async def imdb(ctx, *args):
         summary = response2['plotOutline']['text']
 
     embed = discord.Embed(
-        title=f"{response2['title']['title']} ({show_id['q'] if show_id['q'] == 'TV series' or 'TV mini-series' else show_id['y']})",
+        title=f"{response2['title']['title']} ({show_id['q'] if show_id['q'] == 'TV series' or show_id['q'] == 'TV mini-series' else show_id['y']})",
         description= summary,
         color = discord.Colour.blue()
     )
