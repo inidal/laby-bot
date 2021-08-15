@@ -184,7 +184,7 @@ async def imdb(ctx, *args):
     embed.add_field(name="Rating", value=response2['ratings']['rating'], inline=True)
 
 
-    if response['d'][0]['q'] == 'TV series' or 'TV mini-series':
+    if response['d'][0]['q'] == 'TV series' or response['d'][0]['q'] == 'TV mini-series':
 
         # Start year
         embed.add_field(name="Started", value=response2['title']['seriesStartYear'], inline=True)
