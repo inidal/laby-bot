@@ -38,7 +38,8 @@ async def ping(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='man', help='Get help with this command')
+@bot.command(name='man', help='Get help with this command', hidden=True)
+@commands.is_owner()
 async def man(ctx):
     ''' Get help with these commands '''
 
@@ -59,7 +60,7 @@ async def man(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='chuck', help='Responds with a random joke from Chuck Norris')
+@bot.command(name='chuck', help='A random Chuck fact.')
 async def chuck(ctx):
     response = requests.get("https://api.chucknorris.io/jokes/random").json()
 
@@ -71,7 +72,7 @@ async def chuck(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='roll', help='Roll the dice.')
+@bot.command(name='roll', help='If you like to roll the dice.')
 async def roll(ctx):
     response = random.randrange(1, 7)
 
@@ -80,7 +81,7 @@ async def roll(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='wiki', help='Search for information on Wikipedia.')
+@bot.command(name='wiki', help='Get a summary from Wiki.')
 async def roll(ctx, *args):
 
     word = ' '.join(word for word in args)
@@ -113,7 +114,7 @@ async def roll(ctx, *args):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='dog', help='Random dog image.')
+@bot.command(name='dog', help='The best therapist has fur and four legs.')
 async def dog(ctx):
 
     URL = "https://dog.ceo/api/breeds/image/random"
@@ -127,7 +128,7 @@ async def dog(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='cat', help='Random cat image.')
+@bot.command(name='cat', help="If cats could talk, they wouldn't.")
 async def cat(ctx):
 
     URL = "http://random.cat"
@@ -142,7 +143,7 @@ async def cat(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='weather', help='Weather.')
+@bot.command(name='weather', help='Get the weather from OpenWeather.')
 async def weather(ctx, *args):
 
     city = ' '.join(word for word in args)
@@ -170,7 +171,7 @@ async def weather(ctx, *args):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='imdb', help='Search for a Movie/Show on IMDb.')
+@bot.command(name='imdb', help='Get info about a movie/tvshow from IMDb.')
 async def imdb(ctx, *args):
 
     user_input = ' '.join(word for word in args)
@@ -293,7 +294,8 @@ async def anniversary():
     if check_anniversary() is not None:
         await channel.send(embed=embed)
 
-@bot.command(name='docs', help='Looking for docs on Google')
+@bot.command(name='docs', help='Looking for a document?', hidden=True)
+@commands.is_owner()
 async def docs(ctx, *args):
 
     user_input = '+'.join(word for word in args)
@@ -307,7 +309,7 @@ async def docs(ctx, *args):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='gif', help='Get a gif from Tenor')
+@bot.command(name='gif', help='Search for a GIF.')
 async def gif(ctx, *args):
 
     # our test search
