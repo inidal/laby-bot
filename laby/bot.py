@@ -3,11 +3,12 @@ import os
 import random
 
 import discord
-from discord.ext import commands
+from discord.ext import tasks, commands
 from dotenv import load_dotenv
 import requests
 import wikipedia
 from bs4 import BeautifulSoup
+import datetime
 
 load_dotenv()
 
@@ -20,7 +21,18 @@ bot = commands.Bot(command_prefix='!')
 
 @bot.event
 async def on_ready():
+    anniversary.start()
     print(f'{bot.user} has connected to Discord!')
+
+@bot.command()
+async def ping(ctx):
+    ''' Checking if laby is working '''
+
+    embed = discord.Embed(title='Pong 🏓',
+                          description="I'm perfectly working.",
+                          color = discord.Colour.green())
+
+    await ctx.send(embed=embed)
 
 @bot.command(name='chuck', help='Responds with a random joke from Chuck Norris')
 async def chuck(ctx):
@@ -206,10 +218,53 @@ async def imdb(ctx, *args):
 
     await ctx.send(embed=embed)
 
-# @bot.command(name='test', help='Testing command.')
-# async def test(ctx, *args):
-#
-#     await ctx.send(f"{result}")
+@tasks.loop(hours=1)
+async def anniversary():
+
+    # Get specific channel
+    channel = bot.get_channel(690019953763811448)
+
+    # Giphy API
+    url = "https://api.giphy.com/v1/gifs/random?api_key=zTAsnQJhdwptUkRKmC1hKBbFeb7FXXC0&tag=happy+birthday&rating=g"
+    giphy_response = requests.request("GET", url).json()
+
+    # Anniversaries list
+    anniversaries = [
+        ['Edmyr', '01-28', '5537'], # Nidal
+        ['Qiujin', '04-01', '1737'], # Amine
+        ['Acrid', '04-03', '0332'], # Hajar
+        ['Marijanna', '08-01', '7262'], # Anas
+        ['thexfighter', '08-18', '9307'], # Mehdi
+        ['mounami', '12-28', '3190'], # Anouar
+        ['Jane', '08-15', '3190'],  # TEST
+        ['John', '08-16', '3125']  # TEST
+    ]
+
+    def check_anniversary():
+
+        names = []
+
+        for i, j, k in anniversaries:
+            check = str(datetime.date.today())[5:] == j
+            names.append(i) if check else None
+
+        happyb_list = ", ".join(name for name in names)
+
+        return happyb_list if len(happyb_list) > 1 else None
+
+    # Embed message
+    embed = discord.Embed(
+        title='Happy birthday time',
+        description= f'🎂 @everyone !! Say Happy Birthday to {check_anniversary()} ! 🎉🎉🎈🎈',
+        color = discord.Colour.magenta()
+    )
+
+    embed.set_image(url=giphy_response['data']['image_original_url'])
+
+    # If anniversary then PARTY
+    if check_anniversary() is not None:
+        await channel.send(embed=embed)
+
 
 
 bot.run(TOKEN)
