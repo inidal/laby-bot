@@ -218,15 +218,16 @@ async def imdb(ctx, *args):
 
     await ctx.send(embed=embed)
 
-@tasks.loop(hours=1)
+# Uncomment Giphy API and embed.set_image
+@tasks.loop(hours=24)
 async def anniversary():
 
     # Get specific channel
     channel = bot.get_channel(690019953763811448)
 
     # Giphy API
-    url = "https://api.giphy.com/v1/gifs/random?api_key=zTAsnQJhdwptUkRKmC1hKBbFeb7FXXC0&tag=happy+birthday&rating=g"
-    giphy_response = requests.request("GET", url).json()
+    # url = "https://api.giphy.com/v1/gifs/random?api_key=zTAsnQJhdwptUkRKmC1hKBbFeb7FXXC0&tag=happy+birthday&rating=g"
+    # giphy_response = requests.request("GET", url).json()
 
     # Anniversaries list
     anniversaries = [
@@ -237,7 +238,7 @@ async def anniversary():
         ['thexfighter', '08-18', '9307'], # Mehdi
         ['mounami', '12-28', '3190'], # Anouar
         ['Jane', '08-15', '3190'],  # TEST
-        ['John', '08-16', '3125']  # TEST
+        ['Edmyr', '08-16', '5537']  # TEST
     ]
 
     def check_anniversary():
@@ -259,12 +260,31 @@ async def anniversary():
         color = discord.Colour.magenta()
     )
 
-    embed.set_image(url=giphy_response['data']['image_original_url'])
+    # embed.set_image(url=giphy_response['data']['image_original_url'])
 
     # If anniversary then PARTY
     if check_anniversary() is not None:
         await channel.send(embed=embed)
 
+@bot.command(name='docs', help='Looking for docs on Google')
+async def docs(ctx, *args):
 
+    user_input = '+'.join(word for word in args)
+
+    google_link = f'https://www.google.com/search?client=opera&q=-inurl%3Ahtm+-inurl%3Ahtml+intitle%3A"index+of"+%2B("%2Febooks"%7C"%2Fbook")+%2B(mobi%7Cpdf%7Cepub)+%2B"{user_input}"'
+    embed = discord.Embed(
+        title='🔍 Open your Google Search result.',
+        url= google_link,
+        color=discord.Colour.blue()
+    )
+
+    await ctx.send(embed=embed)
+
+
+
+
+# name='If you wish to add me in your server,' ,value='[Click here to add]( bot link )'
+
+# https://www.google.com/search?q=-inurl:htm -inurl:html intitle:"index of" +("/ebooks"|"/book") +(mobi|pdf|epub) +{user_input}
 
 bot.run(TOKEN)
