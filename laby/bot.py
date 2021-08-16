@@ -268,9 +268,7 @@ async def anniversary():
         ['Acrid', '04-03', '0332'], # Hajar
         ['Marijanna', '08-01', '7262'], # Anas
         ['thexfighter', '08-18', '9307'], # Mehdi
-        ['mounami', '12-28', '3190'], # Anouar
-        ['Jane', '08-15', '3190'],  # TEST
-        ['Edmyr', '08-16', '5537']  # TEST
+        ['mounami', '12-28', '3190'] # Anouar
     ]
 
     def check_anniversary():
