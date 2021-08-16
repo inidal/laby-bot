@@ -9,6 +9,7 @@ import requests
 import wikipedia
 from bs4 import BeautifulSoup
 import datetime
+import json
 
 load_dotenv()
 
@@ -17,6 +18,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 OPENWEATHER = os.getenv('OPENWEATHER_KEY')
 IMDB_KEY = os.getenv('IMDB_KEY')
 GIPHY_KEY = os.getenv('GIPHY_KEY')
+TENOR_KEY = os.getenv('TENOR_KEY')
 
 bot = commands.Bot(command_prefix='!')
 
@@ -44,15 +46,16 @@ async def man(ctx):
                           description="As simple as that.",
                           color = discord.Colour.green())
 
-    embed.add_field(name="!ping", value='Checking if @laby is alive', inline=True)
-    embed.add_field(name="!chuck", value='A random Chuck fact', inline=True)
-    embed.add_field(name="!roll", value='If you like to roll the dice', inline=True)
-    embed.add_field(name="!wiki <value>", value='Get a summary from Wiki', inline=True)
-    embed.add_field(name="!dog", value='The best therapist has fur and four legs', inline=True)
-    embed.add_field(name="!cat", value="If cats could talk, they wouldn't", inline=True)
-    embed.add_field(name="!weather <value>", value='Get the weather from OpenWeather', inline=True)
-    embed.add_field(name="!imdb <value>", value='Get info about a movie/tvshow from IMDb', inline=True)
-    embed.add_field(name="!docs <value>", value='Looking for a document?', inline=True)
+    embed.add_field(name="`!ping`", value='Checking if @laby is alive', inline=True)
+    embed.add_field(name="`!chuck`", value='A random Chuck fact', inline=True)
+    embed.add_field(name="`!roll`", value='If you like to roll the dice', inline=True)
+    embed.add_field(name="`!wiki <value>`", value='Get a summary from Wiki', inline=True)
+    embed.add_field(name="`!dog`", value='The best therapist has fur and four legs', inline=True)
+    embed.add_field(name="`!cat`", value="If cats could talk, they wouldn't", inline=True)
+    embed.add_field(name="`!weather <value>`", value='Get the weather from OpenWeather', inline=True)
+    embed.add_field(name="`!imdb <value>`", value='Get info about a movie/tvshow from IMDb', inline=True)
+    embed.add_field(name="`!docs <value>`", value='Looking for a document?', inline=True)
+    embed.add_field(name="`!gif <value>`", value='Search for a GIF', inline=True)
 
     await ctx.send(embed=embed)
 
@@ -303,5 +306,33 @@ async def docs(ctx, *args):
     )
 
     await ctx.send(embed=embed)
+
+@bot.command(name='gif', help='Get a gif from Tenor')
+async def gif(ctx, *args):
+
+    # our test search
+    search_term = '+'.join(word for word in args)
+    desc_keywords = ' '.join(word for word in args)
+    lmt = 50
+
+    # get the top 8 GIFs for the search term
+    r = requests.get(
+        "https://g.tenor.com/v1/search?q=%s&key=%s&limit=%s" % (search_term, TENOR_KEY, lmt))
+
+    embed = discord.Embed(
+        title='The gif your asked for',
+        description= f'Your `{desc_keywords}` GIF.',
+        color = discord.Colour.blue()
+    )
+
+    if r.status_code == 200:
+        # load the GIFs using the urls for the smaller GIF sizes
+        top_50gifs = json.loads(r.content)
+        embed.set_image(url=top_50gifs["results"][random.randint(0, 49)]['media'][0]['gif']['url'])
+        await ctx.send(embed=embed)
+    else:
+        top_50gifs = None
+        await ctx.send("Nothing found.")
+
 
 bot.run(TOKEN)
