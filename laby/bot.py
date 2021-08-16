@@ -57,7 +57,9 @@ async def man(ctx):
 @bot.command(name='chuck', help='Responds with a random joke from Chuck Norris')
 async def chuck(ctx):
     response = requests.get("https://api.chucknorris.io/jokes/random").json()
-    embed = discord.Embed(description = response['value'],
+
+    embed = discord.Embed(title = 'Random Chuck Norris Joke (Fact)',
+                          description = response['value'],
                           color = discord.Colour.blue())
 
     embed.set_thumbnail(url = response['icon_url'])
