@@ -34,6 +34,26 @@ async def ping(ctx):
 
     await ctx.send(embed=embed)
 
+@bot.command(name='man', help='Get help with this command')
+async def man(ctx):
+    ''' Get help with these commands '''
+
+    embed = discord.Embed(title='📃 Commands',
+                          description="As simple as that.",
+                          color = discord.Colour.green())
+
+    embed.add_field(name="!ping", value='Checking if @laby is alive', inline=True)
+    embed.add_field(name="!chuck", value='A random Chuck fact', inline=True)
+    embed.add_field(name="!roll", value='If you like to roll the dice', inline=True)
+    embed.add_field(name="!wiki <value>", value='Get a summary from Wiki', inline=True)
+    embed.add_field(name="!dog", value='The best therapist has fur and four legs', inline=True)
+    embed.add_field(name="!cat", value="If cats could talk, they wouldn't", inline=True)
+    embed.add_field(name="!weather <value>", value='Get the weather from OpenWeather', inline=True)
+    embed.add_field(name="!imdb <value>", value='Get info about a movie/tvshow from IMDb', inline=True)
+    embed.add_field(name="!docs <value>", value='Looking for a document?', inline=True)
+
+    await ctx.send(embed=embed)
+
 @bot.command(name='chuck', help='Responds with a random joke from Chuck Norris')
 async def chuck(ctx):
     response = requests.get("https://api.chucknorris.io/jokes/random").json()
