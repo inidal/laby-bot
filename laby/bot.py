@@ -10,6 +10,7 @@ import wikipedia
 from bs4 import BeautifulSoup
 import datetime
 import json
+from googletrans import Translator
 
 load_dotenv()
 
@@ -57,6 +58,7 @@ async def man(ctx):
     embed.add_field(name="`!imdb <value>`", value='Get info about a movie/tvshow from IMDb', inline=True)
     embed.add_field(name="`!docs <value>`", value='Looking for a document?', inline=True)
     embed.add_field(name="`!gif <value>`", value='Search for a GIF', inline=True)
+    embed.add_field(name="`!translate <lang_code> <text>`", value='Use Google Translate to translate a word/sentence.', inline=True)
 
     await ctx.send(embed=embed)
 
@@ -243,7 +245,6 @@ async def imdb(ctx, *args):
     # Trailer video
     embed.add_field(name="Trailer", value=f"https://www.imdb.com/video/{response['d'][0]['v'][0]['id']}", inline=False)
 
-
     await ctx.send(embed=embed)
 
 # Uncomment Giphy API and embed.set_image
@@ -254,8 +255,11 @@ async def anniversary():
     channel = bot.get_channel(690019953763811448)
 
     # Giphy API
-    # url = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_KEY}&tag=happy+birthday&rating=g"
-    # giphy_response = requests.request("GET", url).json()
+    url = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_KEY}&tag=happy+birthday&rating=g"
+    giphy_response = requests.request("GET", url).json()
+
+    # Quote API
+    quote = requests.get("https://type.fit/api/quotes").json()
 
     # Anniversaries list
     anniversaries = [
@@ -283,12 +287,13 @@ async def anniversary():
 
     # Embed message
     embed = discord.Embed(
-        title='Happy birthday time',
-        description= f'🎂 @everyone !! Say Happy Birthday to {check_anniversary()} ! 🎉🎉🎈🎈',
+        title="IT'S YOUR DAY — Happy Birthday!",
+        description= f"🎂 @everyone !! Say Happy Birthday to {check_anniversary()} ! 🎉🎉🎈🎈",
         color = discord.Colour.magenta()
     )
-
-    # embed.set_image(url=giphy_response['data']['image_original_url'])
+    random_quote = random.randint(0, len(quote))
+    embed.set_image(url=giphy_response['data']['image_original_url'])
+    embed.set_footer(text=f'{quote[random_quote]["text"]} — {quote[random_quote]["author"]}')
 
     # If anniversary then PARTY
     if check_anniversary() is not None:
@@ -335,6 +340,32 @@ async def gif(ctx, *args):
     else:
         top_50gifs = None
         await ctx.send("Nothing found.")
+
+@bot.command(name='translate', help='Use Google Translate to translate a word/sentence.')
+async def docs(ctx, arg, *args):
+    translator = Translator()
+
+    text_to_trans = ' '.join(word for word in args)
+
+    # Translation in action
+    try:
+        trans_operation = translator.translate(text_to_trans, dest=arg).text
+    except ValueError:
+        embed = discord.Embed(
+            title= "Usage: !translate <lang_code> <text>",
+            description= '[You can get the language names by code here](https://meta.wikimedia.org/wiki/Template:List_of_language_names_ordered_by_code)',
+            color=discord.Colour.red()
+        )
+
+        await ctx.send(embed=embed)
+        return
+
+    embed = discord.Embed(
+        description=trans_operation,
+        color=discord.Colour.blue()
+    )
+
+    await ctx.send(embed=embed)
 
 
 bot.run(TOKEN)
