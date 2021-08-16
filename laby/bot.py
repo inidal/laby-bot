@@ -280,11 +280,4 @@ async def docs(ctx, *args):
 
     await ctx.send(embed=embed)
 
-
-
-
-# name='If you wish to add me in your server,' ,value='[Click here to add]( bot link )'
-
-# https://www.google.com/search?q=-inurl:htm -inurl:html intitle:"index of" +("/ebooks"|"/book") +(mobi|pdf|epub) +{user_input}
-
 bot.run(TOKEN)
