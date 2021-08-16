@@ -252,7 +252,7 @@ async def imdb(ctx, *args):
 async def anniversary():
 
     # Get specific channel
-    channel = bot.get_channel(690019953763811448)
+    channel = bot.get_channel(417397521451843599)
 
     # Giphy API
     url = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_KEY}&tag=happy+birthday&rating=g"
