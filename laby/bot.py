@@ -170,7 +170,7 @@ async def weather(ctx, *args):
 
     await ctx.send(embed=embed)
 
-@bot.command(name='imdb', help='IMDb.')
+@bot.command(name='imdb', help='Search for a Movie/Show on IMDb.')
 async def imdb(ctx, *args):
 
     user_input = ' '.join(word for word in args)
