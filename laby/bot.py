@@ -16,12 +16,14 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 OPENWEATHER = os.getenv('OPENWEATHER_KEY')
 IMDB_KEY = os.getenv('IMDB_KEY')
+GIPHY_KEY = os.getenv('GIPHY_KEY')
 
 bot = commands.Bot(command_prefix='!')
 
 @bot.event
 async def on_ready():
     anniversary.start()
+    await bot.change_presence(activity=discord.Game(name="with the Universe"))
     print(f'{bot.user} has connected to Discord!')
 
 @bot.command()
@@ -248,7 +250,7 @@ async def anniversary():
     channel = bot.get_channel(690019953763811448)
 
     # Giphy API
-    # url = "https://api.giphy.com/v1/gifs/random?api_key=zTAsnQJhdwptUkRKmC1hKBbFeb7FXXC0&tag=happy+birthday&rating=g"
+    # url = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_KEY}&tag=happy+birthday&rating=g"
     # giphy_response = requests.request("GET", url).json()
 
     # Anniversaries list
