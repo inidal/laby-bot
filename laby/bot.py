@@ -263,12 +263,12 @@ async def anniversary():
 
     # Anniversaries list
     anniversaries = [
-        ['Edmyr', '01-28', '5537'], # Nidal
-        ['Qiujin', '04-01', '1737'], # Amine
-        ['Acrid', '04-03', '0332'], # Hajar
-        ['Marijanna', '08-01', '7262'], # Anas
-        ['thexfighter', '08-18', '9307'], # Mehdi
-        ['mounami', '12-28', '3190'] # Anouar
+        ['Edmyr', '01-28', '5537'],
+        ['Qiujin', '04-01', '1737'],
+        ['Acrid', '04-03', '0332'],
+        ['Marijanna', '08-01', '7262'],
+        ['thexfighter', '08-18', '9307'],
+        ['mounami', '12-28', '3190']
     ]
 
     def check_anniversary():
